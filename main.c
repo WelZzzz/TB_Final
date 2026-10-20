@@ -24,12 +24,12 @@ int main(){
         limparTela();
         showMainMenu();
         
-        option = _getche();
+        option = _getch();
         
         if (option == '1') {
             // Iniciar o jogo
-            printf("iniciarJogo()");
-            
+            printf(" iniciarJogo()");
+            _getch();
         } else if (option == '2') {
             // Mostrar instruções
             showInstructions();
@@ -45,27 +45,6 @@ int main(){
 
     return 0;
 }
-
-/*int esperarTecla(Jogo *j, int telaFinal, int resultado) {
-    
-    int tecla;
-    
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        if (telaFinal) {
-            desenharFimDeJogo(j, resultado);
-        } else {
-            desenharJogo(j);
-        }
-        EndDrawing();
-        
-        tecla = GetKeyPressed(); // letras chegam sempre em maiuscula
-        if (tecla != 0) {
-            return tecla;
-        }
-    }
-    return KEY_Q;
-}*/
 
 void limparTela(void) {
     system("cls");
@@ -120,3 +99,4 @@ void showGameOverScreen(void) {
     printf("Pressione qualquer tecla para continuar...\n");
     _getch();
 }
+
