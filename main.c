@@ -1,10 +1,32 @@
 #include <stdio.h>
-#include Jogo.h
+#include <Jogo.h>
 
+
+void limparTela(void):
+
+int esperarTecla(Jogo *j, int telaFinal, int resultado);
+
+void showMainMenu(void);
 
 int main(){
     
-    int esperarTecla(Jogo *j, int telaFinal, int resultado) {
+    
+
+    while (1){
+        limparTela();
+        showMainMenu();
+        scanf("%d", &option);
+
+
+
+
+    }
+
+
+    return 0;
+}
+
+int esperarTecla(Jogo *j, int telaFinal, int resultado) {
     
     int tecla;
     
@@ -23,8 +45,24 @@ int main(){
         }
     }
     return KEY_Q;
-    }
-    
-
-    return 0;
 }
+
+
+void limparTela(void) {
+    system("cls");
+}   
+
+void showMainMenu(void) {
+    printf("========================================\n");
+    printf("    Expedicao na Ilha dos Algoritmos\n");
+    printf("========================================\n\n");
+    printf("1. Iniciar Jogo\n");
+    printf("2. Como Jogar\n");
+    printf("3. Sair\n\n");
+    printf("Escolha uma opcao: ");
+}
+
+
+
+
+
