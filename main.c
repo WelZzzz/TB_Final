@@ -1,7 +1,12 @@
+//Expedicao na Ilha dos Algoritmos
+/*Este é a main do jogo.*/
+
 #include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
 #include "Jogo.h"
 
-//#define MAPA1 "mapa1.txt"
+#define MAPA1 "mapa1.txt"
 #define KEY_Q 'q'
 
 int esperarTecla(Jogo *j, int telaFinal, int resultado);
@@ -15,6 +20,8 @@ void showInstructions(void);
 void showGameOverScreen(void);
 
 void limparTela(void);
+
+void iniciarJogo(void);
 
 int main(){
     
@@ -69,7 +76,8 @@ void showFinalCredits(void) {
     printf("Voce completou todos os niveis!\n\n");
     printf("Credits:\n");
     printf("Este jogo foi desenvolvido para fins educacionais.\n");
-    printf("Programado por WelZzz.\n\n");
+    printf("Programado por WelZzz e FabioRaupp323.\n\n");
+    printf("========================================\n");
     printf("Pressione qualquer tecla para voltar ao menu...\n");
     _getch();
 }
@@ -85,6 +93,7 @@ void showInstructions(void) {
     printf("S = baixo       Seta = ↓\n");
     printf("D = direita     Seta = →\n\n");
     printf("Colete os cristais necessarios para avancar.\n\n");
+    printf("========================================\n");
     printf("Pressione qualquer tecla para retornar ao menu...\n");
     _getch();
 }
@@ -94,9 +103,41 @@ void showGameOverScreen(void) {
     printf("========================================\n");
     printf("               GAME OVER\n");
     printf("========================================\n\n");
-    printf("Voce perdeu todas as vidas.\n");
-    printf("Reiniciando no nivel 1...\n");
+    printf("Voce gastou todas as energias.\n");
+    printf("\nReiniciando...\n\n");
+    printf("========================================\n");
     printf("Pressione qualquer tecla para continuar...\n");
     _getch();
+}
+
+void iniciarJogo(void){
+    Jogo jogo;
+
+    limparTela();
+
+    if (!carregarMapa(MAPA1, &jogo)) {
+        printf("========================================\n");
+        printf("Erro ao carregar o mapa do jogo.\n");
+        printf("Certifique-se de que o arquivo '%s' existe e esta no diretorio correto.\n\n", MAPA1);
+        printf("========================================\n");
+        printf("Pressione qualquer tecla para voltar ao menu...\n");
+        _getch();
+        return;
+    }
+    
+    printf("========================================\n");
+    printf("     Mapa carregado com sucesso!\n");
+    printf("========================================\n");
+    _getch();
+
+    limparTela();
+        
+    printf("Linhas: %d | Colunas: %d\n", jogo.linhas, jogo.colunas);
+    printf("Energia %d | Cristais Minimos: %d\n", jogo.energia, jogo.minimoCristais);
+        jogo.energia = 35; //energia inicial do jogador
+        jogo.minimoCristais = 3; //minimo de cristais para vencer
+    
+    _getch();
+
 }
 
