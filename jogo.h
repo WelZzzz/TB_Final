@@ -23,12 +23,12 @@ typedef struct {
 
 /* mapa.c */
 int carregarMapa(const char *nomeArquivo, Jogo *j); /* 1 = ok, 0 = erro */
-int telaCabe(Jogo *j); /* ncurses: 1 se mapa + painel cabem */
 void desenharJogo(Jogo *j);
 int movimentoValido(Jogo *j, int comando);
 
 /* jogador.c */
 void moverJogador(int *linha, int *coluna, int comando);
+int esperarTecla(Jogo *j, int telaFinal, int resultado);
 
 /* eventos.c */
 void processarCasa(Jogo *j); /* cristal/evento; atualiza mensagem */
