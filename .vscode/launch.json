@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug (w64devkit)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/main.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/Users/Wesley/Downloads/w64devkit/bin/gdb.exe",
+            "preLaunchTask": "build active C file"
+        }
+    ]
+}
