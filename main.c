@@ -23,6 +23,7 @@ int main(void){
 
     Tela telaAtual = TELA_MENU;
     int tecla;
+    Jogo jogo;
 
     InitWindow(800, 600, "Expedicao na Ilha dos Algoritmos");
     SetTargetFPS(60);
@@ -38,8 +39,10 @@ int main(void){
         switch (telaAtual) {
             case TELA_MENU:
                 
-                if (tecla == KEY_ONE) { // Tecla '1' ou 'Q' pressionada
-                    //iniciarJogo(); // Função para iniciar o jogo (ainda não implementada)
+                if (tecla == KEY_ONE) { 
+                    if (carregarMapa(MAPA1, &jogo)){
+                        telaAtual = TELA_JOGO;
+                    }
                 } else if (tecla == KEY_TWO) {
                     telaAtual = TELA_INSTRUCOES; // Vai para a tela de instruções
                 } else if (tecla == KEY_THREE || tecla == KEY_Q) { // Tecla '3' ou 'Q' pressionada
@@ -54,7 +57,15 @@ int main(void){
                 break;
 
             case TELA_JOGO:
-                // Lógica para a tela do jogo
+                if (tecla == KEY_Q ){
+                    telaAtual = TELA_MENU; // Volta para o menu
+                }
+                else if(telaAtual == TELA_JOGO){
+                    DrawText(TextFormat("Linhas: %d | Colunas: %d", jogo.linhas, jogo.colunas), 40, 80, 20, BLACK);
+                    DrawText(TextFormat("Energia: %d | Cristais minimos: %d", jogo.energia, jogo.minimoCristais), 40, 110, 20, BLACK);
+                    DrawText(TextFormat("Jogador em: linha %d, coluna %d", jogo.linhaJ, jogo.colunaJ), 40, 140, 20, BLACK);
+                    DrawText("Q = voltar ao menu", 40, 200, 20, DARKGRAY);
+                }
                 break;
 
             default:
