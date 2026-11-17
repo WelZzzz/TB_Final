@@ -1,21 +1,22 @@
 //Expedicao na Ilha dos Algoritmos
 /*Este é a main do jogo.*/
 
+#include <stdio.h>
+#include <string.h>
 #include "raylib.h"
 #include "jogo.h"
 
 #define MAPA1 "mapa1.txt"
 
-typedef enum { TELA_MENU, TELA_INSTRUCOES, TELA_JOGO, TELA_SAIR} Tela;
+typedef enum { TELA_MENU, TELA_INSTRUCOES, TELA_JOGO, TELA_FIM, TELA_SAIR} Tela;
 
 //Prototipos das funcoes
 void showMainMenu(void);
-
 void showFinalCredits(void);
-
 void showInstructions(void);
-
 void showGameOverScreen(void);
+void processarTurno(Jogo *j, int tecla, int *resultado);
+int novaPartida(Jogo *j);
 
 /*void iniciarJogo(void);*/
 
@@ -23,9 +24,18 @@ int main(void){
 
     Tela telaAtual = TELA_MENU;
     int tecla;
+    int resultado = EM_ANDAMENTO;
+    int erroMapa = 0;
     Jogo jogo;
 
-    InitWindow(800, 600, "Expedicao na Ilha dos Algoritmos");
+
+    if (carregarMapa(MAPA1, &jogo) == 0) {
+        //Se o mapa não foi carregado corretamente, exibe uma mensagem de erro.
+        printf("Erro ao carregar %s: %s\n", MAPA1, jogo.mensagem);
+
+        return 1;
+    }
+    InitWindow(larguraJanela(&jogo), alturaJanela(&jogo), "Expedicao na Ilha dos Algoritmos");
     SetTargetFPS(60);
     SetExitKey(KEY_NULL); // Desabilita a tecla de saída padrão (ESC)
 
@@ -40,9 +50,13 @@ int main(void){
             case TELA_MENU:
                 
                 if (tecla == KEY_ONE) { 
-                    if (carregarMapa(MAPA1, &jogo)){
+                    if (novaPartida(&jogo)) {
+                        resultado = EM_ANDAMENTO;
                         telaAtual = TELA_JOGO;
-                    }
+                    }else{
+                        erroMapa = 1; // Sinaliza que houve um erro ao carregar o mapa
+                        telaAtual = TELA_SAIR; // Sai do jogo se não conseguir carregar o mapa
+                    }    
                 } else if (tecla == KEY_TWO) {
                     telaAtual = TELA_INSTRUCOES; // Vai para a tela de instruções
                 } else if (tecla == KEY_THREE || tecla == KEY_Q) { // Tecla '3' ou 'Q' pressionada
@@ -58,16 +72,34 @@ int main(void){
 
             case TELA_JOGO:
                 if (tecla == KEY_Q ){
-                    telaAtual = TELA_MENU; // Volta para o menu
+                    resultado = DESISTENCIA;
+                } 
+                else if (tecla !=0){
+                    processarTurno(&jogo, tecla, &resultado);
                 }
-                else if(telaAtual == TELA_JOGO){
+                if (resultado != EM_ANDAMENTO) {
+                    telaAtual = TELA_FIM; // Vai para a tela de fim de jogo
+                }
+                /*else if(telaAtual == TELA_JOGO){
                     DrawText(TextFormat("Linhas: %d | Colunas: %d", jogo.linhas, jogo.colunas), 40, 80, 20, BLACK);
                     DrawText(TextFormat("Energia: %d | Cristais minimos: %d", jogo.energia, jogo.minimoCristais), 40, 110, 20, BLACK);
                     DrawText(TextFormat("Jogador em: linha %d, coluna %d", jogo.linhaJ, jogo.colunaJ), 40, 140, 20, BLACK);
                     DrawText("Q = voltar ao menu", 40, 200, 20, DARKGRAY);
+                }*/
+                break;
+            case TELA_FIM:
+                if (tecla == KEY_R){
+                    if (novaPartida(&jogo)) {
+                        resultado = EM_ANDAMENTO;
+                        telaAtual = TELA_JOGO;
+                    }else{
+                        erroMapa = 1; // Sinaliza que houve um erro ao carregar o mapa
+                        telaAtual = TELA_SAIR; // Sai do jogo se não conseguir carregar o mapa
+                    }    
+                } else if (tecla == KEY_Q) { // Tecla 'Q' pressionada
+                    telaAtual = TELA_SAIR; // Sai do jogo
                 }
                 break;
-
             default:
                 break;
         }
@@ -79,11 +111,22 @@ int main(void){
             showMainMenu();
         } else if (telaAtual == TELA_INSTRUCOES) {
             showInstructions();
+        } else if (telaAtual == TELA_JOGO) {
+            desenharJogo(&jogo);
+        } else if (telaAtual == TELA_FIM) {
+            desenharFimDeJogo(&jogo, resultado);
         }
         EndDrawing();
     }
 
     CloseWindow(); // Fecha a janela e limpa recursos
+    
+    //Mensagem de erro caso o mapa não tenha sido carregado corretamente
+    if (erroMapa) {
+        printf("Erro ao carregar %s: %s\n", MAPA1, jogo.mensagem);
+
+        return 1;
+    }
     return 0;
 }
 
@@ -95,7 +138,7 @@ void showMainMenu(void) {
 }
 
 void showFinalCredits(void) {
-    DrawText("PARABENS VOCE GANHOU!", 40, 80, 32, DARKGREEN);
+    DrawText("OBRIGADO POR JOGAR!", 40, 80, 32, DARKGREEN);
     DrawText("Voce completou todos os niveis!", 40, 150, 22, BLACK);
     DrawText("Este jogo foi desenvolvido para fins educacionais.", 40, 210, 20, BLACK);
     DrawText("Programado por WelZzz e FabioRaupp323.", 40, 240, 20, BLACK);
@@ -145,4 +188,49 @@ void showGameOverScreen(void) {
     _getch();
 
 }*/
+
+void processarTurno(Jogo *j, int tecla, int *resultado){
+    j->mensagem[0] = '\0'; // Limpa a mensagem
+    // Verifica se o movimento é válido diminui energia e processa o turno
+    if (movimentoValido(j, tecla)){
+        moverJogador(&j->linhaJ, &j->colunaJ, tecla);
+        j->energia--; // Reduz a energia do jogador a cada movimento
+        j->turnos++; // Incrementa o número de turnos
+        processarCasa(j);
+        //Define vitoria ou derrota
+        if(chegouNaSaida(j) == VITORIA){
+            *resultado = VITORIA;
+        }
+        if ((*resultado) == EM_ANDAMENTO && j->energia<=0){
+            *resultado = DERROTA;
+        }
+    }
+    // Se o movimento não for válido, atualiza a mensagem de erro
+    else{
+        strcpy(j->mensagem, "Movimento invalido!"); 
+    }
+}
+
+int novaPartida(Jogo *j){
+
+    // Erro ao carregar o mapa
+    if (!carregarMapa(MAPA1, j)){
+        return 0; 
+    }
+
+    j->cristais = 0; // Reinicia a contagem de cristais
+    j->turnos = 0; // Reinicia a contagem de turnos
+    j->mensagem[0] = '\0'; // Limpa a mensagem
+    return 1; // Mapa carregado com sucesso
+}
+
+
+
+
+
+
+
+
+
+
 
