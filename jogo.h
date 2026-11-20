@@ -23,6 +23,10 @@
 #define BONUS_RECUPERACAO 5
 #define DANO_ARMADILHA 4
 
+// Constantes do evento especial
+#define VELOCIDADE_JANELA 400.00 // Velocidade da janela em pixels por segundo
+#define DURACAO_EVENTO 10.00 // Duração do evento especial em segundos
+
 // Struct que guarda o estado do jogo
 typedef struct {
     int linhas, colunas; // Dimensoes lidas do arquivo
@@ -32,6 +36,10 @@ typedef struct {
     int cristais, turnos;
     char mensagem[TAM_MSG]; // Ultima mensagem mostrada na tela 
     char mapa[MAX_LINHAS][MAX_COLUNAS]; 
+    int eventoEspecialAtivo; // Flag para indicar se o evento especial está ativo
+    double inicioEventoEspecial; // Tempo de início do evento especial
+    float posicaoXJanela, posicaoYJanela; // Posição da janela para o evento especial
+    float velocidadeX, velocidadeY; // Velocidade de movimento da janela no evento especial
 } Jogo;
 
 /* mapa.c */
@@ -48,5 +56,7 @@ void moverJogador(int *linha, int *coluna, int comando);
 void processarCasa(Jogo *j); // Cristal/evento; atualiza mensagem
 void desenharFimDeJogo(Jogo *j, int resultado);
 int chegouNaSaida(Jogo *j);
+void iniciarEventoEspecial(Jogo *j);
+void atualizarEventoEspecial(Jogo *j);
 
 #endif

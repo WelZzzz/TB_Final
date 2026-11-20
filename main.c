@@ -104,6 +104,10 @@ int main(void){
                 break;
         }
 
+        // Atualiza o evento especial se estiver ativo
+        if (jogo.eventoEspecialAtivo)
+            atualizarEventoEspecial(&jogo);
+
         // Desenha a tela principal do jogo
         BeginDrawing();
         ClearBackground(WHITE);
@@ -223,14 +227,3 @@ int novaPartida(Jogo *j){
     j->mensagem[0] = '\0'; // Limpa a mensagem
     return 1; // Mapa carregado com sucesso
 }
-
-
-
-
-
-
-
-
-
-
-
